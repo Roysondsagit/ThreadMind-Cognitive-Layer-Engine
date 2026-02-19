@@ -44,6 +44,25 @@ threadmind/
 ```
 *Index Recommendations:* `user_id`, `created_at`, `category`.
 
+## 💾 Data Storage
+
+- **Default:** Data is stored in browser **localStorage** (no setup required).
+- **MongoDB:** To use MongoDB, run the backend and set `VITE_API_URL` in `.env.local`.
+
+### Using MongoDB
+
+1. Install MongoDB locally or create a free cluster at [MongoDB Atlas](https://www.mongodb.com/cloud/atlas).
+2. Install backend deps and run:
+   ```bash
+   cd backend && pip install -r requirements.txt
+   MONGODB_URI="mongodb://localhost:27017" uvicorn main:app --reload --port 8000
+   ```
+3. In project root `.env.local`, add:
+   ```
+   VITE_API_URL=http://localhost:8000
+   ```
+4. Restart the frontend (`npm run dev`).
+
 ## ⚙️ Smart Resurfacing Algorithm (Python Implementation)
 
 ```python

@@ -29,12 +29,13 @@ const App: React.FC = () => {
     refreshThreads();
   }, []);
 
-  const refreshThreads = () => {
-    setThreads(getThreads());
+  const refreshThreads = async () => {
+    const data = await getThreads();
+    setThreads(data);
   };
 
-  const handleDelete = (id: string) => {
-    deleteThread(id);
+  const handleDelete = async (id: string) => {
+    await deleteThread(id);
     refreshThreads();
   };
 
@@ -182,10 +183,10 @@ const App: React.FC = () => {
                 </div>
               </header>
 
-              <Collector onSaved={refreshThreads} />
+              <Collector onSaved={() => refreshThreads()} />
               
               {!searchQuery && threads.length > 0 && (
-                <SmartResurfacer threads={threads} />
+                <SmartResurfacer threads={threads} onViewed={refreshThreads} />
               )}
 
               {/* Filtering */}

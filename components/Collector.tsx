@@ -44,7 +44,7 @@ const Collector: React.FC<CollectorProps> = ({ onSaved }) => {
 
     try {
       const analysis = await processContent(input, mode);
-      finalizeSave(analysis, mode, input);
+      await finalizeSave(analysis, mode, input);
     } catch (err) {
       console.error(err);
       setIsProcessing(false);
@@ -68,7 +68,7 @@ const Collector: React.FC<CollectorProps> = ({ onSaved }) => {
           const base64data = (reader.result as string).split(',')[1];
           setProcessStep('Gemini Intelligence Layer...');
           const analysis = await processContent({ data: base64data, mimeType: 'audio/webm' }, 'voice');
-          finalizeSave(analysis, 'voice', '[Voice Rescue]');
+          await finalizeSave(analysis, 'voice', '[Voice Rescue]');
         };
       };
       mediaRecorder.start();
@@ -83,7 +83,7 @@ const Collector: React.FC<CollectorProps> = ({ onSaved }) => {
     }
   };
 
-  const finalizeSave = (analysis: any, sourceMode: string, original: string) => {
+  const finalizeSave = async (analysis: any, sourceMode: string, original: string) => {
     const newThread: Thread = {
       id: Math.random().toString(36).substr(2, 9),
       userId: 'current-user',
@@ -99,7 +99,7 @@ const Collector: React.FC<CollectorProps> = ({ onSaved }) => {
       lastViewed: new Date().toISOString(),
       createdAt: new Date().toISOString(),
     };
-    saveThread(newThread);
+    await saveThread(newThread);
     setInput('');
     setSuccess(true);
     setIsProcessing(false);

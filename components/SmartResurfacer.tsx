@@ -7,9 +7,10 @@ import { Sparkles, RefreshCcw, Lightbulb } from 'lucide-react';
 
 interface SmartResurfacerProps {
   threads: Thread[];
+  onViewed?: () => void;
 }
 
-const SmartResurfacer: React.FC<SmartResurfacerProps> = ({ threads }) => {
+const SmartResurfacer: React.FC<SmartResurfacerProps> = ({ threads, onViewed }) => {
   const [recommendation, setRecommendation] = useState<{ thread: Thread, reason: string } | null>(null);
 
   useEffect(() => {
@@ -19,11 +20,12 @@ const SmartResurfacer: React.FC<SmartResurfacerProps> = ({ threads }) => {
     }
   }, [threads]);
 
-  const handleResurface = () => {
+  const handleResurface = async () => {
     const rec = getRecommendation(threads);
     if (rec) {
       setRecommendation(rec);
-      markAsViewed(rec.thread.id);
+      await markAsViewed(rec.thread.id);
+      onViewed?.();
     }
   };
 

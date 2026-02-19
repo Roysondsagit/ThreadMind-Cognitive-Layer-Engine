@@ -42,6 +42,7 @@ const BotSetup: React.FC<BotSetupProps> = ({ onRescueComplete }) => {
         originalContent: userMsg,
         title: analysis.title,
         summary: analysis.summary,
+        extractedText: analysis.extractedText,
         tags: analysis.tags,
         intent: analysis.intent,
         category: analysis.category,
@@ -49,7 +50,7 @@ const BotSetup: React.FC<BotSetupProps> = ({ onRescueComplete }) => {
         lastViewed: new Date().toISOString(),
         createdAt: new Date().toISOString(),
       };
-      saveThread(newThread);
+      await saveThread(newThread);
       
       setSimLog(prev => [...prev, { 
         sender: 'bot', 

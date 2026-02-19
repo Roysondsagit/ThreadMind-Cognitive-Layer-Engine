@@ -1,11 +1,12 @@
 
 import os
 import datetime
-from typing import List, Optional
+from typing import List, Optional, Any
 from fastapi import FastAPI, HTTPException, Request, Body
 from pydantic import BaseModel, Field
 from motor.motor_asyncio import AsyncIOMotorClient
 from fastapi.middleware.cors import CORSMiddleware
+from bson import ObjectId
 
 # ENV SETUP
 MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://localhost:27017")
@@ -26,6 +27,18 @@ app.add_middleware(
 client = AsyncIOMotorClient(MONGODB_URI)
 db = client[DB_NAME]
 
+
+def doc_to_dict(doc: dict) -> dict:
+    """Convert MongoDB document to JSON-serializable dict."""
+    d = dict(doc)
+    d["_id"] = str(d["_id"])
+    if "last_viewed" in d and hasattr(d["last_viewed"], "isoformat"):
+        d["last_viewed"] = d["last_viewed"].isoformat()
+    if "created_at" in d and hasattr(d["created_at"], "isoformat"):
+        d["created_at"] = d["created_at"].isoformat()
+    return d
+
+
 # SCHEMAS
 class ThreadBase(BaseModel):
     user_id: str
@@ -38,14 +51,10 @@ class ThreadBase(BaseModel):
     intent: str
     category: str
 
+
 class ThreadCreate(ThreadBase):
     pass
 
-class Thread(ThreadBase):
-    id: str = Field(alias="_id")
-    view_count: int = 0
-    last_viewed: datetime.datetime
-    created_at: datetime.datetime
 
 # ROUTES
 @app.post("/api/threads", response_model=dict)
@@ -57,14 +66,35 @@ async def create_thread(thread: ThreadCreate):
     thread_data["view_count"] = 0
     thread_data["last_viewed"] = datetime.datetime.utcnow()
     thread_data["created_at"] = datetime.datetime.utcnow()
-    
+
     result = await db.threads.insert_one(thread_data)
     return {"id": str(result.inserted_id), "status": "stored"}
 
-@app.get("/api/threads/{user_id}", response_model=List[Thread])
-async def get_user_threads(user_id: str):
+
+@app.get("/api/threads/{user_id}")
+async def get_user_threads(user_id: str) -> List[dict]:
     cursor = db.threads.find({"user_id": user_id}).sort("created_at", -1)
-    return [Thread(**t) async for t in cursor]
+    return [doc_to_dict(t) async for t in cursor]
+
+
+@app.patch("/api/threads/{thread_id}/view")
+async def mark_thread_viewed(thread_id: str):
+    try:
+        result = await db.threads.update_one(
+            {"_id": ObjectId(thread_id)},
+            {
+                "$inc": {"view_count": 1},
+                "$set": {"last_viewed": datetime.datetime.utcnow()},
+            },
+        )
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Thread not found")
+        return {"status": "ok"}
+    except Exception as e:
+        if "invalid" in str(e).lower() or "id" in str(e).lower():
+            raise HTTPException(status_code=400, detail="Invalid thread ID")
+        raise
+
 
 @app.post("/webhook/whatsapp")
 async def whatsapp_webhook(request: Request):
@@ -90,10 +120,15 @@ async def whatsapp_webhook(request: Request):
 
 @app.delete("/api/threads/{thread_id}")
 async def delete_thread(thread_id: str):
-    result = await db.threads.delete_one({"_id": thread_id})
-    if result.deleted_count == 0:
-        raise HTTPException(status_code=404, detail="Thread not found")
-    return {"status": "deleted"}
+    try:
+        result = await db.threads.delete_one({"_id": ObjectId(thread_id)})
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Thread not found")
+        return {"status": "deleted"}
+    except Exception as e:
+        if "invalid" in str(e).lower() or "id" in str(e).lower():
+            raise HTTPException(status_code=400, detail="Invalid thread ID")
+        raise
 
 if __name__ == "__main__":
     import uvicorn
