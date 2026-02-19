@@ -1,0 +1,9 @@
+{
+  "name": "ThreadMind – A Cognitive Layer Engine",
+  "description": "An intelligent second brain that processes messy inputs (URLs, voice, text) using Gemini, stores them semantically, and resurfaces them contextually.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ]
+}
