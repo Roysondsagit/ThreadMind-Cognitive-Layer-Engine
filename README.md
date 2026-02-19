@@ -1,4 +1,3 @@
-
 # 🧠 ThreadMind: Cognitive Layer Engine
 
 ThreadMind is not a bookmarking tool—it is a cognitive expansion layer that captures, analyzes, and resurfaces digital entropy.
