@@ -70,9 +70,3 @@ def calculate_score(last_viewed_at, semantic_relevance=0.5):
 2.  **Day 2: Intelligence Layer**. Implement Semantic Search and the Scoring Engine. Build the React Dashboard.
 3.  **Day 3: UX & Polish**. Add Voice Rescue, the Cognitive Assistant chatbot, and final animations.
 
-## 🎤 Demo Script (2 Minutes)
-
-- **Problem (20s)**: "We consume 100x more info than we remember. We save bookmarks to die."
-- **Solution (40s)**: "ThreadMind is your cognitive layer. Send a messy Instagram link to our WhatsApp bot. Gemini instantly extracts the value, tags it, and files it."
-- **The Magic (40s)**: "But it doesn't just sit there. Our Resurfacing Engine tracks your obsessions. Because I've been saving coding links today, it's surfacing this forgotten API doc from last week."
-- **Closing (20s)**: "Memory is a choice. Choose ThreadMind."
