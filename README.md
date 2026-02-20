@@ -2,7 +2,10 @@
 
 ThreadMind is not a bookmarking tool—it is a cognitive expansion layer that captures, analyzes, and resurfaces digital entropy.
 
-Try this project on [thread-mind-cognitive-layer-engine.vercel.app](https://thread-mind-cognitive-layer-engine.vercel.app)
+Try this project on :
+[thread-mind-cognitive-layer-engine.vercel.app](https://thread-mind-cognitive-layer-engine.vercel.app)
+
+
 
 ## 📁 Folder Structure (Production Ready)
 
