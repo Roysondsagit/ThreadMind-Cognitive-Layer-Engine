@@ -2,6 +2,15 @@
 
 ThreadMind is not a bookmarking tool—it is a cognitive expansion layer that captures, analyzes, and resurfaces digital entropy.
 
+## ⚡ Quick Start
+
+1. **Get a Gemini API key** from [Google AI Studio](https://aistudio.google.com/apikey)
+2. Create `.env.local` in the project root with:
+   ```
+   GEMINI_API_KEY=your_actual_api_key_here
+   ```
+3. Run `npm install` and `npm run dev`
+
 ## 📁 Folder Structure (Production Ready)
 
 ```text

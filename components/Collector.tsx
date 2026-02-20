@@ -16,6 +16,7 @@ const Collector: React.FC<CollectorProps> = ({ onSaved }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [mode, setMode] = useState<'text' | 'url' | 'voice'>('url');
   const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
@@ -23,6 +24,7 @@ const Collector: React.FC<CollectorProps> = ({ onSaved }) => {
   const handleTextProcess = async () => {
     if (!input.trim()) return;
     setIsProcessing(true);
+    setError(null);
     
     if (mode === 'url') {
       const lower = input.toLowerCase();
@@ -46,7 +48,8 @@ const Collector: React.FC<CollectorProps> = ({ onSaved }) => {
       const analysis = await processContent(input, mode);
       await finalizeSave(analysis, mode, input);
     } catch (err) {
-      console.error(err);
+      const msg = err instanceof Error ? err.message : "Something went wrong. Try again.";
+      setError(msg);
       setIsProcessing(false);
     }
   };
@@ -158,7 +161,7 @@ const Collector: React.FC<CollectorProps> = ({ onSaved }) => {
               </div>
               <textarea
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
+                onChange={(e) => { setInput(e.target.value); setError(null); }}
                 placeholder={mode === 'url' ? '     Paste Instagram, Twitter, or Blog URL...' : 'What is worth remembering?'}
                 className="w-full h-40 p-8 pt-12 bg-slate-50 border border-slate-100 rounded-[32px] focus:ring-4 focus:ring-indigo-100/50 focus:bg-white transition-all resize-none text-slate-900 font-bold text-lg placeholder:text-slate-300"
               />
@@ -175,6 +178,11 @@ const Collector: React.FC<CollectorProps> = ({ onSaved }) => {
           )}
         </div>
 
+        {error && (
+          <div className="mt-6 p-4 bg-red-50 border border-red-100 rounded-2xl text-red-700 text-sm font-bold">
+            {error}
+          </div>
+        )}
         {mode !== 'voice' && (
           <div className="mt-8 flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center space-x-3 text-[10px] text-indigo-400 font-black uppercase tracking-widest">
