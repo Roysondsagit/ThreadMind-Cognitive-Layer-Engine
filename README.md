@@ -6,7 +6,7 @@ ThreadMind is not a bookmarking tool—it is a cognitive expansion layer that ca
 
 ### Check out the working demo:
 
-<video src="demo.mp4" controls width="600"></video>
+[▶ **Watch the demo video**](./demo.mp4)
 
 ## 📁 Folder Structure (Production Ready)
 
