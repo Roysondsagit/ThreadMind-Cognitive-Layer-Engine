@@ -29,6 +29,34 @@ threadmind/
 └── README.md
 ```
 
+## 📡 WhatsApp → Database Flow
+
+```mermaid
+flowchart LR
+    subgraph User
+        WA[📱 WhatsApp]
+    end
+    
+    subgraph ThreadMind
+        TW[Twilio API]
+        WH[Webhook<br/>/webhook/whatsapp]
+        AI[Gemini AI]
+        API[REST API]
+        DB[(MongoDB)]
+    end
+    
+    WA -->|"Link / Voice / Text"| TW
+    TW -->|POST| WH
+    WH -->|"Extract & Analyze"| AI
+    AI -->|"Title, Summary, Tags"| WH
+    WH -->|"Store thread"| API
+    API -->|insert_one| DB
+    DB -->|"Saved ✓"| API
+    API --> WH
+    WH -->|"🔥 Rescued!"| TW
+    TW --> WA
+```
+
 ## 🗄️ Database Schema (MongoDB)
 
 ```json
