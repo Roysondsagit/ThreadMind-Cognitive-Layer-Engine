@@ -10,9 +10,311 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=JetBrains+Mono:wght@400;500&display=swap"
     rel="stylesheet">
-  <link rel="stylesheet" href="/index.css">
+
+  <!-- Must be set BEFORE the CDN script -->
+  <script>
+    tailwind = { config: { darkMode: 'class' } };
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+
+    html.dark ::-webkit-scrollbar-track {
+      background: #1e293b;
+    }
+
+    html.dark ::-webkit-scrollbar-thumb {
+      background: #475569;
+    }
+
+    html.dark ::-webkit-scrollbar-thumb:hover {
+      background: #64748b;
+    }
+
+    /* ── Dark mode base overrides for CDN ── */
+    html.dark body {
+      background-color: #020617;
+      color: #f8fafc;
+    }
+
+    /* Backgrounds */
+    html.dark .dark\:bg-slate-950 {
+      background-color: #020617 !important;
+    }
+
+    html.dark .dark\:bg-slate-900 {
+      background-color: #0f172a !important;
+    }
+
+    html.dark .dark\:bg-slate-800 {
+      background-color: #1e293b !important;
+    }
+
+    html.dark .dark\:bg-slate-800\/30 {
+      background-color: rgba(30, 41, 59, 0.3) !important;
+    }
+
+    html.dark .dark\:bg-slate-800\/50 {
+      background-color: rgba(30, 41, 59, 0.5) !important;
+    }
+
+    /* Text */
+    html.dark .dark\:text-white {
+      color: #fff !important;
+    }
+
+    html.dark .dark\:text-slate-200 {
+      color: #e2e8f0 !important;
+    }
+
+    html.dark .dark\:text-slate-300 {
+      color: #cbd5e1 !important;
+    }
+
+    html.dark .dark\:text-slate-400 {
+      color: #94a3b8 !important;
+    }
+
+    html.dark .dark\:text-indigo-400 {
+      color: #818cf8 !important;
+    }
+
+    html.dark .dark\:text-indigo-200 {
+      color: #c7d2fe !important;
+    }
+
+    html.dark .dark\:text-indigo-300 {
+      color: #a5b4fc !important;
+    }
+
+    html.dark .dark\:text-red-400 {
+      color: #f87171 !important;
+    }
+
+    /* Borders */
+    html.dark .dark\:border-slate-800 {
+      border-color: #1e293b !important;
+    }
+
+    html.dark .dark\:border-slate-700 {
+      border-color: #334155 !important;
+    }
+
+    html.dark .dark\:border-indigo-800 {
+      border-color: #3730a3 !important;
+    }
+
+    html.dark .dark\:border-indigo-700 {
+      border-color: #4338ca !important;
+    }
+
+    /* Hover states */
+    html.dark .dark\:hover\:bg-slate-800:hover {
+      background-color: #1e293b !important;
+    }
+
+    html.dark .dark\:hover\:bg-red-900\/20:hover {
+      background-color: rgba(127, 29, 29, 0.2) !important;
+    }
+
+    html.dark .dark\:hover\:text-white:hover {
+      color: #fff !important;
+    }
+
+    html.dark .dark\:hover\:text-red-400:hover {
+      color: #f87171 !important;
+    }
+
+    html.dark .dark\:hover\:border-indigo-700:hover {
+      border-color: #4338ca !important;
+    }
+
+    /* Active nav */
+    html.dark .dark\:bg-indigo-600 {
+      background-color: #4f46e5 !important;
+    }
+
+    html.dark .dark\:shadow-indigo-900 {
+      box-shadow: 0 20px 25px -5px rgba(49, 46, 129, 0.3) !important;
+    }
+
+    /* Placeholder */
+    html.dark .dark\:placeholder\:text-slate-600::placeholder {
+      color: #475569 !important;
+    }
+
+    /* Focus rings */
+    html.dark .dark\:focus\:ring-indigo-900:focus {
+      --tw-ring-color: rgba(49, 46, 129, 0.5) !important;
+    }
+
+    /* Indigo accent backgrounds */
+    html.dark .dark\:bg-indigo-900\/20 {
+      background-color: rgba(49, 46, 129, 0.2) !important;
+    }
+
+    html.dark .dark\:bg-indigo-900\/30 {
+      background-color: rgba(49, 46, 129, 0.3) !important;
+    }
+
+    html.dark .dark\:bg-indigo-500\/5 {
+      background-color: rgba(99, 102, 241, 0.05) !important;
+    }
+
+    html.dark .dark\:bg-indigo-500\/10 {
+      background-color: rgba(99, 102, 241, 0.1) !important;
+    }
+
+    html.dark .dark\:border-indigo-500\/30 {
+      border-color: rgba(99, 102, 241, 0.3) !important;
+    }
+
+    html.dark .dark\:border-indigo-500\/60 {
+      border-color: rgba(99, 102, 241, 0.6) !important;
+    }
+
+    html.dark .dark\:hover\:border-indigo-500\/60:hover {
+      border-color: rgba(99, 102, 241, 0.6) !important;
+    }
+
+    html.dark .dark\:hover\:bg-indigo-500\/10:hover {
+      background-color: rgba(99, 102, 241, 0.1) !important;
+    }
+
+    html.dark .dark\:hover\:text-indigo-300:hover {
+      color: #a5b4fc !important;
+    }
+
+    /* Category badge tweaks */
+    html.dark .dark\:bg-orange-900\/20 {
+      background-color: rgba(124, 45, 18, 0.2) !important;
+    }
+
+    html.dark .dark\:text-orange-400 {
+      color: #fb923c !important;
+    }
+
+    html.dark .dark\:border-orange-800 {
+      border-color: #9a3412 !important;
+    }
+
+    html.dark .dark\:bg-blue-900\/20 {
+      background-color: rgba(30, 58, 138, 0.2) !important;
+    }
+
+    html.dark .dark\:text-blue-400 {
+      color: #60a5fa !important;
+    }
+
+    html.dark .dark\:border-blue-800 {
+      border-color: #1e40af !important;
+    }
+
+    html.dark .dark\:bg-emerald-900\/20 {
+      background-color: rgba(6, 78, 59, 0.2) !important;
+    }
+
+    html.dark .dark\:text-emerald-400 {
+      color: #34d399 !important;
+    }
+
+    html.dark .dark\:border-emerald-800 {
+      border-color: #065f46 !important;
+    }
+
+    html.dark .dark\:bg-sky-900\/20 {
+      background-color: rgba(12, 74, 110, 0.2) !important;
+    }
+
+    html.dark .dark\:text-sky-400 {
+      color: #38bdf8 !important;
+    }
+
+    html.dark .dark\:border-sky-800 {
+      border-color: #075985 !important;
+    }
+
+    html.dark .dark\:bg-purple-900\/20 {
+      background-color: rgba(88, 28, 135, 0.2) !important;
+    }
+
+    html.dark .dark\:text-purple-400 {
+      color: #c084fc !important;
+    }
+
+    html.dark .dark\:border-purple-800 {
+      border-color: #6b21a8 !important;
+    }
+
+    /* Misc */
+    html.dark .dark\:bg-red-900\/20 {
+      background-color: rgba(127, 29, 29, 0.2) !important;
+    }
+
+    html.dark .dark\:border-red-800 {
+      border-color: #991b1b !important;
+    }
+
+    html.dark .dark\:text-red-400 {
+      color: #f87171 !important;
+    }
+
+    html.dark .dark\:group-hover\:text-indigo-400:hover {
+      color: #818cf8 !important;
+    }
+
+    html.dark .dark\:bg-slate-700 {
+      background-color: #334155 !important;
+    }
+
+    html.dark .dark\:border-slate-600 {
+      border-color: #475569 !important;
+    }
+
+    html.dark .dark\:text-slate-300 {
+      color: #cbd5e1 !important;
+    }
+
+    html.dark .dark\:bg-slate-950 {
+      background-color: #020617 !important;
+    }
+
+    /* pink dark */
+    html.dark .dark\:from-pink-950\/40 {
+      --tw-gradient-from: rgba(80, 7, 36, 0.4) !important;
+    }
+
+    html.dark .dark\:to-orange-950\/40 {
+      --tw-gradient-to: rgba(67, 20, 7, 0.4) !important;
+    }
+  </style>
+
   <script type="importmap">
 {
   "imports": {
@@ -25,9 +327,10 @@
   }
 }
   </script>
+  <link rel="stylesheet" href="/index.css">
 </head>
 
-<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-white transition-colors duration-300">
+<body class="bg-slate-50 text-slate-900 transition-colors duration-300">
   <div id="root"></div>
   <script type="module" src="/index.tsx"></script>
 </body>
