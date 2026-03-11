@@ -1,29 +1,40 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, BrainCircuit, LayoutGrid, BarChart3, ShieldCheck, Zap, Mic, Square, Loader2, Filter, Trash2 } from 'lucide-react';
+import { Search, BrainCircuit, LayoutGrid, BarChart3, ShieldCheck, Zap, Mic, Square, Loader2, Filter, Trash2, Moon, Sun, LogOut } from 'lucide-react';
 import Collector from './components/Collector';
 import ThreadCard from './components/ThreadCard';
 import SmartResurfacer from './components/SmartResurfacer';
 import Insights from './components/Insights';
 import BotSetup from './components/BotSetup';
 import CognitiveAssistant from './components/CognitiveAssistant';
+import LoginPage from './components/LoginPage';
 import { getThreads, saveThread, deleteThread } from './services/vaultService';
 import { processContent, semanticSearch, transcribeAudio } from './services/geminiService';
 import { Thread, Category } from './types';
 
 const App: React.FC = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const [view, setView] = useState<'vault' | 'insights' | 'settings'>('vault');
   const [threads, setThreads] = useState<Thread[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<Thread[]>([]);
   const [activeCategory, setActiveCategory] = useState<Category | 'All'>('All');
   const [isSearching, setIsSearching] = useState(false);
-  const [isDemoing, setIsDemoing] = useState(false);
 
   // Voice Search States
-  const [isRecordingSearch, setIsRecordingSearch] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
+  const [isRecordingSearch, setIsRecordingSearch] = useState(false);
+
+  // Apply / remove dark class on <html>
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
 
   useEffect(() => {
     refreshThreads();
@@ -94,17 +105,21 @@ const App: React.FC = () => {
   const filteredThreads = threads.filter(t => activeCategory === 'All' || t.category === activeCategory);
   const displayedThreads = searchQuery ? searchResults : filteredThreads;
 
+  if (!isLoggedIn) {
+    return <LoginPage onLogin={() => setIsLoggedIn(true)} />;
+  }
+
   return (
-    <div className="min-h-screen bg-[#FDFDFF] flex font-sans selection:bg-indigo-100 selection:text-indigo-900">
+    <div className="min-h-screen bg-[#FDFDFF] dark:bg-slate-950 flex font-sans selection:bg-indigo-100 selection:text-indigo-900 dark:selection:bg-indigo-900 dark:selection:text-indigo-100 transition-colors duration-300">
       {/* Sidebar */}
-      <aside className="hidden lg:flex w-80 flex-col bg-white border-r border-slate-100 fixed h-full z-20">
+      <aside className="hidden lg:flex w-80 flex-col bg-white dark:bg-slate-900 border-r border-slate-100 dark:border-slate-800 fixed h-full z-20 transition-colors duration-300">
         <div className="p-8 flex flex-col h-full">
           <div className="flex items-center space-x-3 mb-12">
-            <div className="bg-gradient-to-tr from-indigo-600 to-violet-600 p-2.5 rounded-2xl text-white shadow-xl shadow-indigo-200">
+            <div className="bg-gradient-to-tr from-indigo-600 to-violet-600 p-2.5 rounded-2xl text-white shadow-xl shadow-indigo-200 dark:shadow-indigo-900">
               <BrainCircuit size={28} />
             </div>
             <div>
-              <h1 className="text-2xl font-black tracking-tight text-slate-900 leading-none">ThreadMind</h1>
+              <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white leading-none">ThreadMind</h1>
               <p className="text-[10px] text-indigo-500 font-bold uppercase tracking-widest mt-1.5 flex items-center">
                 <ShieldCheck size={10} className="mr-1" /> Cognitive Layer
               </p>
@@ -112,39 +127,64 @@ const App: React.FC = () => {
           </div>
 
           <nav className="space-y-1.5 flex-1">
-            <button 
+            <button
               onClick={() => setView('vault')}
-              className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl text-sm font-bold transition-all group ${view === 'vault' ? 'bg-slate-900 text-white shadow-xl shadow-slate-200' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`}
+              className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl text-sm font-bold transition-all group ${view === 'vault' ? 'bg-slate-900 dark:bg-indigo-600 text-white shadow-xl shadow-slate-200 dark:shadow-indigo-900' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'}`}
             >
               <div className="flex items-center space-x-3">
                 <LayoutGrid size={18} />
                 <span>Knowledge Vault</span>
               </div>
-              <span className={`text-[10px] px-2 py-0.5 rounded-full ${view === 'vault' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-400'}`}>
+              <span className={`text-[10px] px-2 py-0.5 rounded-full ${view === 'vault' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-400'}`}>
                 {threads.length}
               </span>
             </button>
-            <button 
+            <button
               onClick={() => setView('insights')}
-              className={`w-full flex items-center space-x-3 px-4 py-3.5 rounded-2xl text-sm font-bold transition-all ${view === 'insights' ? 'bg-slate-900 text-white shadow-xl shadow-slate-200' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`}
+              className={`w-full flex items-center space-x-3 px-4 py-3.5 rounded-2xl text-sm font-bold transition-all ${view === 'insights' ? 'bg-slate-900 dark:bg-indigo-600 text-white shadow-xl shadow-slate-200 dark:shadow-indigo-900' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'}`}
             >
               <BarChart3 size={18} />
               <span>Cognitive Trends</span>
             </button>
-            <button 
+            <button
               onClick={() => setView('settings')}
-              className={`w-full flex items-center space-x-3 px-4 py-3.5 rounded-2xl text-sm font-bold transition-all ${view === 'settings' ? 'bg-slate-900 text-white shadow-xl shadow-slate-200' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`}
+              className={`w-full flex items-center space-x-3 px-4 py-3.5 rounded-2xl text-sm font-bold transition-all ${view === 'settings' ? 'bg-slate-900 dark:bg-indigo-600 text-white shadow-xl shadow-slate-200 dark:shadow-indigo-900' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'}`}
             >
               <Zap size={18} />
               <span>Bot Demo</span>
             </button>
           </nav>
 
-          <div className="mt-auto p-6 bg-slate-50 rounded-3xl border border-slate-100">
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Build Status</p>
-            <div className="flex items-center space-x-2 text-xs font-bold text-slate-600">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span>MVP Ready for Demo</span>
+          <div className="mt-auto space-y-3">
+            {/* Dark mode toggle */}
+            <button
+              onClick={() => setIsDarkMode(!isDarkMode)}
+              className="w-full flex items-center justify-between px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-all"
+            >
+              <div className="flex items-center space-x-3">
+                {isDarkMode ? <Sun size={18} className="text-yellow-400" /> : <Moon size={18} />}
+                <span>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
+              </div>
+              <div className={`w-10 h-5.5 rounded-full transition-colors relative ${isDarkMode ? 'bg-indigo-600' : 'bg-slate-200'}`}>
+                <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all ${isDarkMode ? 'left-5.5' : 'left-0.5'}`} />
+              </div>
+            </button>
+
+            {/* Sign out */}
+            <button
+              onClick={() => setIsLoggedIn(false)}
+              className="w-full flex items-center space-x-3 px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-500 dark:text-slate-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 transition-all"
+            >
+              <LogOut size={18} />
+              <span>Sign Out</span>
+            </button>
+
+            <div className="p-6 bg-slate-50 dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700">
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Build Status</p>
+              <div className="flex items-center space-x-2 text-xs font-bold text-slate-600 dark:text-slate-300">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>MVP Ready for Demo</span>
+              </div>
             </div>
           </div>
         </div>
@@ -157,25 +197,25 @@ const App: React.FC = () => {
             <>
               <header className="mb-12 flex flex-col xl:flex-row xl:items-center justify-between gap-8">
                 <div>
-                  <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-none mb-3">
-                    Your Cognitive <span className="text-indigo-600">Vault.</span>
+                  <h1 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-none mb-3">
+                    Your Cognitive <span className="text-indigo-600 dark:text-indigo-400">Vault.</span>
                   </h1>
-                  <p className="text-slate-500 font-bold">Rescuing your scattered thoughts from the digital void.</p>
+                  <p className="text-slate-500 dark:text-slate-400 font-bold">Rescuing your scattered thoughts from the digital void.</p>
                 </div>
 
                 <div className="relative w-full xl:w-[400px]">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-300" size={20} />
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-300 dark:text-slate-600" size={20} />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                     placeholder="Search memories..."
-                    className="w-full pl-12 pr-12 py-4 bg-white border border-slate-200 rounded-2xl shadow-sm focus:ring-4 focus:ring-indigo-100 outline-none font-bold placeholder:text-slate-300 transition-all"
+                    className="w-full pl-12 pr-12 py-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm focus:ring-4 focus:ring-indigo-100 dark:focus:ring-indigo-900 outline-none font-bold placeholder:text-slate-300 dark:placeholder:text-slate-600 text-slate-900 dark:text-white transition-all"
                   />
-                  <button 
+                  <button
                     onClick={isRecordingSearch ? stopVoiceSearch : startVoiceSearch}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 p-2 rounded-xl hover:bg-slate-100 transition-colors text-slate-400"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors text-slate-400"
                   >
                     {isRecordingSearch ? <Square size={18} className="text-red-500 animate-pulse" /> : <Mic size={18} />}
                   </button>
@@ -184,19 +224,19 @@ const App: React.FC = () => {
               </header>
 
               <Collector onSaved={() => refreshThreads()} />
-              
+
               {!searchQuery && threads.length > 0 && (
                 <SmartResurfacer threads={threads} onViewed={refreshThreads} />
               )}
 
               {/* Filtering */}
               <div className="flex items-center space-x-3 mb-8 overflow-x-auto pb-2">
-                <Filter size={16} className="text-slate-400" />
+                <Filter size={16} className="text-slate-400 dark:text-slate-500 shrink-0" />
                 {['All', ...Object.values(Category)].map(cat => (
                   <button
                     key={cat}
                     onClick={() => setActiveCategory(cat as any)}
-                    className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest border transition-all shrink-0 ${activeCategory === cat ? 'bg-indigo-600 text-white border-indigo-600 shadow-xl shadow-indigo-100' : 'bg-white text-slate-500 border-slate-100 hover:border-indigo-200'}`}
+                    className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest border transition-all shrink-0 ${activeCategory === cat ? 'bg-indigo-600 text-white border-indigo-600 shadow-xl shadow-indigo-100 dark:shadow-indigo-900' : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-100 dark:border-slate-700 hover:border-indigo-200 dark:hover:border-indigo-700'}`}
                   >
                     {cat}
                   </button>
@@ -208,9 +248,9 @@ const App: React.FC = () => {
                   {displayedThreads.map((thread) => (
                     <div key={thread.id} className="relative group">
                       <ThreadCard thread={thread} />
-                      <button 
+                      <button
                         onClick={() => handleDelete(thread.id)}
-                        className="absolute top-4 right-16 p-2 bg-white/80 backdrop-blur rounded-xl text-red-400 opacity-0 group-hover:opacity-100 transition-all hover:text-red-600 hover:bg-red-50"
+                        className="absolute top-4 right-16 p-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur rounded-xl text-red-400 opacity-0 group-hover:opacity-100 transition-all hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30"
                       >
                         <Trash2 size={16} />
                       </button>
@@ -218,7 +258,7 @@ const App: React.FC = () => {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-20 bg-white rounded-[40px] border border-slate-100">
+                <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-[40px] border border-slate-100 dark:border-slate-800">
                   <p className="text-slate-400 font-bold">No threads found in this sector of your mind.</p>
                 </div>
               )}

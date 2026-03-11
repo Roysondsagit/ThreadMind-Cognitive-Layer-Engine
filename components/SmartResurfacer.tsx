@@ -14,7 +14,6 @@ const SmartResurfacer: React.FC<SmartResurfacerProps> = ({ threads, onViewed }) 
   const [recommendation, setRecommendation] = useState<{ thread: Thread, reason: string } | null>(null);
 
   useEffect(() => {
-    // Initial recommendation
     if (threads.length > 0 && !recommendation) {
       setRecommendation(getRecommendation(threads));
     }
@@ -41,16 +40,16 @@ const SmartResurfacer: React.FC<SmartResurfacerProps> = ({ threads, onViewed }) 
             </div>
             <h2 className="text-2xl font-black tracking-tight uppercase tracking-widest">Resurface Smart</h2>
           </div>
-          
+
           <h3 className="text-3xl font-black mb-6 leading-tight">
             {recommendation ? recommendation.reason : "Retrieve a high-signal memory from your vault."}
           </h3>
-          
+
           <p className="text-indigo-100 font-bold opacity-80 text-lg mb-8 leading-relaxed">
             Our algorithm weights semantic relevance against time decay to ensure your "Second Brain" stays active and useful.
           </p>
 
-          <button 
+          <button
             onClick={handleResurface}
             className="group px-10 py-5 bg-white text-indigo-600 rounded-2xl font-black shadow-xl hover:bg-indigo-50 transition-all transform active:scale-95 flex items-center space-x-3 text-lg"
           >
@@ -71,8 +70,8 @@ const SmartResurfacer: React.FC<SmartResurfacerProps> = ({ threads, onViewed }) 
       </div>
 
       {/* Background Decor */}
-      <div className="absolute top-[-20%] right-[-10%] w-96 h-96 bg-white/5 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-[-20%] left-[-10%] w-96 h-96 bg-black/10 rounded-full blur-3xl"></div>
+      <div className="absolute top-[-20%] right-[-10%] w-96 h-96 bg-white/5 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="absolute bottom-[-20%] left-[-10%] w-96 h-96 bg-black/10 rounded-full blur-3xl pointer-events-none"></div>
     </div>
   );
 };

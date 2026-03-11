@@ -17,7 +17,7 @@ const Collector: React.FC<CollectorProps> = ({ onSaved }) => {
   const [mode, setMode] = useState<'text' | 'url' | 'voice'>('url');
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
 
@@ -25,7 +25,7 @@ const Collector: React.FC<CollectorProps> = ({ onSaved }) => {
     if (!input.trim()) return;
     setIsProcessing(true);
     setError(null);
-    
+
     if (mode === 'url') {
       const lower = input.toLowerCase();
       if (lower.includes('instagram.com')) {
@@ -37,7 +37,7 @@ const Collector: React.FC<CollectorProps> = ({ onSaved }) => {
       } else {
         setProcessStep('Analyzing Web Metadata...');
       }
-      
+
       await new Promise(r => setTimeout(r, 1200));
       setProcessStep('Running Cognitive Analysis...');
     } else {
@@ -94,7 +94,7 @@ const Collector: React.FC<CollectorProps> = ({ onSaved }) => {
       originalContent: original,
       title: analysis.title,
       summary: analysis.summary,
-      extractedText: analysis.extractedText, // Now saving the full main text/caption
+      extractedText: analysis.extractedText,
       tags: analysis.tags,
       intent: analysis.intent,
       category: analysis.category,
@@ -112,26 +112,26 @@ const Collector: React.FC<CollectorProps> = ({ onSaved }) => {
   };
 
   return (
-    <div className="bg-white rounded-[40px] shadow-2xl border border-slate-100 p-8 md:p-10 mb-16 relative overflow-hidden group">
-      <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-50/30 rounded-full blur-3xl -mr-32 -mt-32"></div>
+    <div className="bg-white dark:bg-slate-900 rounded-[40px] shadow-2xl border border-slate-100 dark:border-slate-800 p-8 md:p-10 mb-16 relative overflow-hidden group transition-colors duration-300">
+      <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-50/30 dark:bg-indigo-900/10 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none" />
 
       <div className="relative z-10">
         <div className="flex flex-wrap items-center gap-4 mb-8">
-          <button 
+          <button
             onClick={() => setMode('url')}
-            className={`px-8 py-3.5 rounded-2xl text-sm font-black flex items-center space-x-3 transition-all ${mode === 'url' ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-100' : 'bg-slate-50 text-slate-500'}`}
+            className={`px-8 py-3.5 rounded-2xl text-sm font-black flex items-center space-x-3 transition-all ${mode === 'url' ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-100 dark:shadow-indigo-900' : 'bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white'}`}
           >
             <Link size={18} /> <span>Rescue Link</span>
           </button>
-          <button 
+          <button
             onClick={() => setMode('text')}
-            className={`px-8 py-3.5 rounded-2xl text-sm font-black flex items-center space-x-3 transition-all ${mode === 'text' ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-100' : 'bg-slate-50 text-slate-500'}`}
+            className={`px-8 py-3.5 rounded-2xl text-sm font-black flex items-center space-x-3 transition-all ${mode === 'text' ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-100 dark:shadow-indigo-900' : 'bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white'}`}
           >
             <Type size={18} /> <span>Quick Spark</span>
           </button>
-          <button 
+          <button
             onClick={() => setMode('voice')}
-            className={`px-8 py-3.5 rounded-2xl text-sm font-black flex items-center space-x-3 transition-all ${mode === 'voice' ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-100' : 'bg-slate-50 text-slate-500'}`}
+            className={`px-8 py-3.5 rounded-2xl text-sm font-black flex items-center space-x-3 transition-all ${mode === 'voice' ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-100 dark:shadow-indigo-900' : 'bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white'}`}
           >
             <Mic size={18} /> <span>Voice Rescue</span>
           </button>
@@ -148,7 +148,7 @@ const Collector: React.FC<CollectorProps> = ({ onSaved }) => {
                 {isRecording ? <Square size={32} /> : <Mic size={32} />}
               </button>
               <div className="text-center">
-                <h4 className="text-xl font-black text-slate-900">{isRecording ? "Listening..." : "Speak your idea"}</h4>
+                <h4 className="text-xl font-black text-slate-900 dark:text-white">{isRecording ? "Listening..." : "Speak your idea"}</h4>
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-2">Captured via ThreadMind Ear</p>
               </div>
             </div>
@@ -156,30 +156,30 @@ const Collector: React.FC<CollectorProps> = ({ onSaved }) => {
             <div className="w-full relative">
               <div className="absolute top-5 left-5 z-10 flex space-x-3 opacity-30">
                 {input.includes('instagram') ? <Instagram size={18} className="text-pink-500" /> :
-                 input.includes('twitter') || input.includes('x.com') ? <Twitter size={18} className="text-blue-400" /> :
-                 input.includes('blog') ? <FileText size={18} className="text-emerald-500" /> : <Globe size={18} />}
+                  input.includes('twitter') || input.includes('x.com') ? <Twitter size={18} className="text-blue-400" /> :
+                    input.includes('blog') ? <FileText size={18} className="text-emerald-500" /> : <Globe size={18} className="text-slate-400 dark:text-slate-500" />}
               </div>
               <textarea
                 value={input}
                 onChange={(e) => { setInput(e.target.value); setError(null); }}
                 placeholder={mode === 'url' ? '     Paste Instagram, Twitter, or Blog URL...' : 'What is worth remembering?'}
-                className="w-full h-40 p-8 pt-12 bg-slate-50 border border-slate-100 rounded-[32px] focus:ring-4 focus:ring-indigo-100/50 focus:bg-white transition-all resize-none text-slate-900 font-bold text-lg placeholder:text-slate-300"
+                className="w-full h-40 p-8 pt-12 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-[32px] focus:ring-4 focus:ring-indigo-100/50 dark:focus:ring-indigo-900/50 focus:bg-white dark:focus:bg-slate-800 transition-all resize-none text-slate-900 dark:text-white font-bold text-lg placeholder:text-slate-300 dark:placeholder:text-slate-600 outline-none"
               />
             </div>
           )}
 
           {isProcessing && (
-            <div className="absolute inset-0 bg-white/90 backdrop-blur-sm rounded-[32px] flex flex-col items-center justify-center z-20">
-              <div className="bg-slate-900 p-4 rounded-3xl shadow-2xl mb-4">
+            <div className="absolute inset-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm rounded-[32px] flex flex-col items-center justify-center z-20">
+              <div className="bg-slate-900 dark:bg-indigo-600 p-4 rounded-3xl shadow-2xl mb-4">
                 <Loader2 className="animate-spin text-white" size={32} />
               </div>
-              <p className="text-slate-900 font-black uppercase tracking-[0.2em] text-xs">{processStep}</p>
+              <p className="text-slate-900 dark:text-white font-black uppercase tracking-[0.2em] text-xs">{processStep}</p>
             </div>
           )}
         </div>
 
         {error && (
-          <div className="mt-6 p-4 bg-red-50 border border-red-100 rounded-2xl text-red-700 text-sm font-bold">
+          <div className="mt-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 rounded-2xl text-red-700 dark:text-red-400 text-sm font-bold">
             {error}
           </div>
         )}
@@ -189,11 +189,11 @@ const Collector: React.FC<CollectorProps> = ({ onSaved }) => {
               <Sparkles size={14} />
               <span>Deep Scraping Intelligence Active</span>
             </div>
-            
+
             <button
               onClick={handleTextProcess}
               disabled={isProcessing || !input.trim()}
-              className="w-full md:w-auto px-12 py-5 bg-slate-900 text-white rounded-[24px] font-black text-lg shadow-xl hover:bg-slate-800 disabled:opacity-50 flex items-center justify-center space-x-4 transition-all transform active:scale-95"
+              className="w-full md:w-auto px-12 py-5 bg-slate-900 dark:bg-indigo-600 text-white rounded-[24px] font-black text-lg shadow-xl hover:bg-slate-800 dark:hover:bg-indigo-500 disabled:opacity-50 flex items-center justify-center space-x-4 transition-all transform active:scale-95"
             >
               {success ? (
                 <><CheckCircle2 size={24} className="text-emerald-400" /> <span>Rescued!</span></>
